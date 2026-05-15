@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MubashirBuilds — new post</title>
+  <!-- Intentionally no meta description — keep this page quiet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="bg-noise"></div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" style="text-decoration:none">
+        <div class="wordmark">
+          <span class="wordmark-main">MubashirBuilds</span>
+          <span class="wordmark-dot">.</span>
+        </div>
+      </a>
+      <nav class="header-meta">
+        <span class="tag-pill">new post</span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="admin-hero">
+      <h1>Write a post</h1>
+      <p>Markdown supported. Posts are committed directly to your repo via the GitHub API.</p>
+    </section>
+
+    <!-- Token setup card -->
+    <div class="setup-card" id="setup-card" style="margin-bottom:28px">
+      <strong>First-time setup</strong> — paste your GitHub Personal Access Token below.
+      It's saved only in your browser's <code>localStorage</code> and never leaves your machine.<br><br>
+      Need one? <a href="https://github.com/settings/tokens/new?description=MubashirBuilds+devlog&scopes=repo" target="_blank">Generate a token here</a>
+      — tick the <code>repo</code> scope. Classic token is fine.
+    </div>
+
+    <div class="form-section" id="form-section">
+
+      <!-- GitHub token -->
+      <div class="field">
+        <label>GitHub Token</label>
+        <div class="token-field">
+          <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+          <button class="token-toggle" id="token-toggle" type="button">show</button>
+        </div>
+      </div>
+
+      <!-- Repo name -->
+      <div class="field">
+        <label>Repo name</label>
+        <input type="text" id="gh-repo" placeholder="mubashirbuilds" value="mubashirbuilds" />
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border-soft);margin:4px 0" />
+
+      <!-- Title + category row -->
+      <div class="fields-row">
+        <div class="field">
+          <label>Title</label>
+          <input type="text" id="post-title" placeholder="What are you writing about?" />
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="post-category">
+            <option value="">— none —</option>
+            <option value="ML / AI">ML / AI</option>
+            <option value="System Design">System Design</option>
+            <option value="Project">Project</option>
+            <option value="Video Notes">Video Notes</option>
+            <option value="Concepts">Concepts</option>
+            <option value="Misc">Misc</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="field">
+        <label>Body (Markdown)</label>
+        <textarea id="post-body" placeholder="# Your post&#10;&#10;Write in **Markdown**. Code blocks, headers, lists — all supported.&#10;&#10;```python&#10;print('hello world')&#10;```"></textarea>
+      </div>
+
+      <!-- Preview toggle -->
+      <button class="preview-toggle-btn" id="preview-btn" type="button">preview</button>
+      <div class="preview-box prose" id="preview-box"></div>
+
+      <!-- Status -->
+      <div class="status-bar" id="status-bar"></div>
+
+      <!-- Submit -->
+      <button class="submit-btn" id="submit-btn" type="button">Publish post →</button>
+
+    </div>
+  </main>
+
+  <footer>
+    <span class="footer-note">admin · MubashirBuilds</span>
+    <a href="index.html" class="footer-note" style="color:var(--accent);text-decoration:none">← view devlog</a>
+  </footer>
+
+  <script>
+    // ── Config ──────────────────────────────────────────────
+    const GITHUB_USER = 'Mubashir9';
+    const LS_TOKEN    = 'mb_gh_token';
+    const LS_REPO     = 'mb_gh_repo';
+
+    marked.setOptions({ breaks: true, gfm: true });
+
+    // ── Restore saved values ────────────────────────────────
+    const tokenInput = document.getElementById('gh-token');
+    const repoInput  = document.getElementById('gh-repo');
+    const saved = localStorage.getItem(LS_TOKEN);
+    if (saved) {
+      tokenInput.value = saved;
+      document.getElementById('setup-card').style.display = 'none';
+    }
+    const savedRepo = localStorage.getItem(LS_REPO);
+    if (savedRepo) repoInput.value = savedRepo;
+
+    // ── Token show/hide ─────────────────────────────────────
+    const tokenToggle = document.getElementById('token-toggle');
+    tokenToggle.addEventListener('click', () => {
+      const isPass = tokenInput.type === 'password';
+      tokenInput.type = isPass ? 'text' : 'password';
+      tokenToggle.textContent = isPass ? 'hide' : 'show';
+    });
+
+    // ── Preview ─────────────────────────────────────────────
+    const previewBtn = document.getElementById('preview-btn');
+    const previewBox = document.getElementById('preview-box');
+    previewBtn.addEventListener('click', () => {
+      const open = previewBox.classList.toggle('visible');
+      previewBtn.textContent = open ? 'hide preview' : 'preview';
+      if (open) {
+        previewBox.innerHTML = marked.parse(document.getElementById('post-body').value || '*nothing to preview*');
+      }
+    });
+    document.getElementById('post-body').addEventListener('input', () => {
+      if (previewBox.classList.contains('visible')) {
+        previewBox.innerHTML = marked.parse(document.getElementById('post-body').value);
+      }
+    });
+
+    // ── Publish ─────────────────────────────────────────────
+    document.getElementById('submit-btn').addEventListener('click', publishPost);
+
+    async function publishPost() {
+      const token    = tokenInput.value.trim();
+      const repo     = repoInput.value.trim();
+      const title    = document.getElementById('post-title').value.trim();
+      const category = document.getElementById('post-category').value;
+      const body     = document.getElementById('post-body').value.trim();
+
+      if (!token)  return setStatus('error',   'Paste your GitHub token first.');
+      if (!repo)   return setStatus('error',   'Enter your repo name.');
+      if (!title)  return setStatus('error',   'Give your post a title.');
+      if (!body)   return setStatus('error',   'Post body is empty.');
+
+      // Save token & repo locally for next time
+      localStorage.setItem(LS_TOKEN, token);
+      localStorage.setItem(LS_REPO, repo);
+      document.getElementById('setup-card').style.display = 'none';
+
+      setStatus('loading', 'Publishing…');
+      document.getElementById('submit-btn').disabled = true;
+
+      const now      = new Date();
+      const dateISO  = now.toISOString();
+      const slug     = slugify(title) + '-' + now.getTime();
+      const filename = `${slug}.json`;
+
+      const postData = { title, category, date: dateISO, body };
+
+      try {
+        // 1. Write the post JSON file
+        await ghWrite(token, repo, `posts/${filename}`,
+          JSON.stringify(postData, null, 2),
+          `post: ${title}`
+        );
+
+        // 2. Fetch current index
+        let index = [];
+        try {
+          const idxRes = await ghRead(token, repo, 'posts/index.json');
+          if (idxRes) index = JSON.parse(atob(idxRes.content.replace(/\n/g,'')));
+        } catch (_) { /* index doesn't exist yet */ }
+
+        // 3. Prepend new post filename (newest first)
+        index.unshift(filename);
+
+        // 4. Write updated index
+        await ghWrite(token, repo, 'posts/index.json',
+          JSON.stringify(index, null, 2),
+          `index: add ${filename}`,
+          await getFileSHA(token, repo, 'posts/index.json')
+        );
+
+        setStatus('success', `✓ "${title}" published! It'll appear on your devlog in a moment.`);
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-body').value  = '';
+        document.getElementById('post-category').value = '';
+        previewBox.classList.remove('visible');
+        previewBtn.textContent = 'preview';
+
+      } catch (e) {
+        console.error(e);
+        setStatus('error', `Failed: ${e.message}`);
+      } finally {
+        document.getElementById('submit-btn').disabled = false;
+      }
+    }
+
+    // ── GitHub API helpers ───────────────────────────────────
+    const API = 'https://api.github.com';
+
+    async function ghRead(token, repo, path) {
+      const res = await fetch(`${API}/repos/${GITHUB_USER}/${repo}/contents/${path}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+      });
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error(`GitHub read error ${res.status}`);
+      return res.json();
+    }
+
+    async function getFileSHA(token, repo, path) {
+      const data = await ghRead(token, repo, path);
+      return data ? data.sha : undefined;
+    }
+
+    async function ghWrite(token, repo, path, content, message, sha) {
+      const body = {
+        message,
+        content: btoa(unescape(encodeURIComponent(content))), // utf-8 safe base64
+      };
+      if (sha) body.sha = sha;
+
+      const res = await fetch(`${API}/repos/${GITHUB_USER}/${repo}/contents/${path}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `GitHub write error ${res.status}`);
+      }
+      return res.json();
+    }
+
+    // ── Utils ────────────────────────────────────────────────
+    function slugify(str) {
+      return str.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim().replace(/\s+/g, '-').slice(0, 60);
+    }
+
+    function setStatus(type, msg) {
+      const el = document.getElementById('status-bar');
+      el.textContent = msg;
+      el.className = `status-bar visible ${type}`;
+    }
+  </script>
+</body>
+</html>
