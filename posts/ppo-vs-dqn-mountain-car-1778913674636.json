@@ -1,0 +1,6 @@
+{
+  "title": "PPO vs DQN Mountain Car",
+  "category": "ML / AI",
+  "date": "2026-05-16T06:41:14.636Z",
+  "body": "# PPO MountainCar-v0\n\nAs part of an uni assignment, one of the task was to create a custom environment for MountainCar from the gymnasium environment and train it using different reward functions. So what i did was used a Position based reward system and a Velocity based reward system. The names suggest what each does but for the Position the agent is rewarded based on the position the car is at and for the velocity its rewarded for generating enough velocity to reach the goal.\n\nFrom experimentation saw that the position based reward system failed as the position changes very slowly each step. The gradient signal was too weak and delayed for the agent to properly associate its immediate actions (throttle left/right) with the long-term changes in position. PPO struggled to optimize this and failed to converge.\n\nOn the other hand the velocity based reward system was a success as the model eventually learnt to swing to the goal rather than just generate kinetic energy through velocity."
+}
