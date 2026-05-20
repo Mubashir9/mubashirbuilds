@@ -1,0 +1,6 @@
+{
+  "title": "Firebase",
+  "category": "Concepts",
+  "date": "2026-05-20T14:19:55.964Z",
+  "body": "# Revisiting Firebase\n\nToday I saw the need to revisit Googles Firebase Studio for a personal tool I am building. The tool itself is just a simple task tracking tool. The last time I used Firebase was around 2022 for a project I did in my penultimate semester during my bachelors in Monash University. The whole experience of the app has changed and everything is powered by Gemini now. So basically I was able to just prompt my way to setting up the project -> database -> authentication -> web app. The whole process took like 3-4 minutes which was insane to me as last I remember it was super tedious to set up a simple project on cloud. \n\nI have been using Supabase pretty often these days but this new version of Firebase really wants me to go to back to building apps around it."
+}
