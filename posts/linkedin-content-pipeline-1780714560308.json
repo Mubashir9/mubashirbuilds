@@ -1,0 +1,6 @@
+{
+  "title": "LinkedIn Content Pipeline",
+  "category": "Project",
+  "date": "2026-06-06T02:56:00.308Z",
+  "body": "# Out of the Box LinkedIn Content Pipeline\n\nSo I want to start posting on LinkedIn too, separately from the things I post here. This blog is like my raw unfiltered journal [sort of :)]. \n\nSo I started exploring out of the box ways to do this. And since I love Claude I decided to build 2 projects. LinkedIn Academic and LinkedIn Projects. Both these projects help write and format posts based on their titles. The Academic project is for things I am studying/reading on. And the Projects project is for stuff I am building/built. Next I asked Claude to build a simple in Claude app to help me organize an order for my posting on LinkedIn. So this way everything is happening inside Claude. No custom application, No third party tools, No API set up and No database setup. \n\nI know there may be better ways to do this, But honestly I just wanted something quick and simple. I might think of better ways to do this in the future maybe but for now I am pretty satisfied with this setup."
+}
