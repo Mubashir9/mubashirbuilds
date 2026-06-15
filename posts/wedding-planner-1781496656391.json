@@ -1,0 +1,6 @@
+{
+  "title": "Wedding Planner",
+  "category": "Project",
+  "date": "2026-06-15T04:10:56.391Z",
+  "body": "# I built a wedding planner for myself!\n\nSo I recently got engaged.. And I realized planning a marriage is a huge headache but planning a desi marriage is an even larger headache! There's so many things to do and think about.\n\nSo I decided to built a tracking system for me and my wife where everything related to the wedding is one place. Events, Tasks, Budget pretty much everything necessary is on the app to view. \n\nI'm using a pretty standard stack with Next.js on the backend, React on the frontend, Database and Authentication with Supabase, Vercel for hosting it and the AI is powered by Gemini 2.5 flash (as its pretty much free to use in my case).\n\nSomething that I really want to integrate on this app is a moodboard for the photography aspects of the wedding. I am not sure yet on how to build this as currently the moodboard is kind of fragmented between Instagram and Pinterest. So this will be a challenging task but its a feature I'm excited to work on :).\n\nYou can see the project here : [https://github.com/Mubashir9/weddingplanner]."
+}
