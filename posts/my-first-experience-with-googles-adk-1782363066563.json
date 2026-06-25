@@ -1,0 +1,6 @@
+{
+  "title": "My First experience with Googles ADK",
+  "category": "ML / AI",
+  "date": "2026-06-25T04:51:06.563Z",
+  "body": "# My First experience with Googles ADK\n\nI just started working on Googles 5 Day AI Agent Challenge to learn how google works with AI Agents. I just completed Day 1 where I learnt about the basic concepts regarding LLMs, Agentic Architectures etc.\n\nPretty much everything was foundational and mostly the value came from running the notebooks they provided. From my experience the way the framework is designed is highly abstract and very easy to understand. Yes, you do have control over the code but its very easy to get the hand of it. Building an agent is as simple as naming it and giving it instructions wrap up into an Agent Class and voila! You can give it tools or you can even make other Agents and use them as tools.\n\nConceptually I learnt about different architectures as Sequential (Ordered Task Execution), Parallel Agents (Concurrent Execution), Loop Agents (Iterative Refinement) and Orchestrator (Agents with other Agents as tools so LLM decides)."
+}
